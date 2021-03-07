@@ -25,7 +25,7 @@ def add_user(message, db_collection):
             'important': [],
             'ordinary': [],
             'notifications': False,
-            'notification_interval': 0,
+            'notification_interval': 60,
             'working_process': True
         }
         db_collection.insert_one(user)

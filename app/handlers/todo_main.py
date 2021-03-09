@@ -1,5 +1,5 @@
 import data.settings_ui as ui
-from loader import BOT as bot, BTN_MORE_HELP, KEYBOARD_MENU_CASE as MENU_CASE # noqa
+from loader import BOT as bot, BTN_MORE_HELP, KEYBOARD_MENU_CASE as MENU_CASE, KEYBOARD_MENU_MAIN as MENU_MAIN # noqa
 from utils.todo import notification_before_task, add_task # noqa
 
 
@@ -24,4 +24,9 @@ def todo_main(message):
             text = ui.dialogue['task_desc']
             notification_before_task(message, text)
             bot.register_next_step_handler(message, add_task, list_name)
+        if message.text == ui.menu_list_items['back']:
+            sticker = open(ui.sticker_path['main'], 'rb')
+            bot.send_sticker(message.from_user.id, sticker)
+            text = ui.dialogue['main_menu']
+            bot.send_message(message.from_user.id, text, reply_markup=MENU_MAIN)
     print('MAIN SCOPE MSG', message.text)

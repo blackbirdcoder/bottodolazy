@@ -2,7 +2,8 @@ bot_name = 'Лени Бот'
 
 sticker_path = {
     'hello': 'static/images/lazyhello.webp',
-    'returned': 'static/images/lazyreturned.webp'
+    'returned': 'static/images/lazyreturned.webp',
+    'main': 'static/images/lazymainmenu.webp'
 }
 
 dialogue = {
@@ -16,6 +17,7 @@ dialogue = {
     'task_desc': 'Опишите задачу:',
     'add_success': 'Задача добавлена в список',
     'not_success': 'Что-то пошло не так. Ошибка!',
+    'main_menu': 'Главное меню',
 }
 
 menu_main_items = {

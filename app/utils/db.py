@@ -24,7 +24,7 @@ def add_user(message, db_collection):
             'last_name': message.from_user.last_name,
             'important': [],
             'ordinary': [],
-            'notifications': False,
+            'notifications': True,
             'notification_interval': 60,
             'working_process': True
         }
@@ -45,3 +45,11 @@ def user_get_tasks(message, db_collection):
         else:
             result[key] = None
     return result
+
+
+# ============ set
+def user_set_task(message, db_collection, current_list, current_task):
+    print('Current task:', current_task)
+    result = db_collection.update_one({"user_telegram_id": message.from_user.id},
+                                      {"$push": {current_list: current_task}})
+    return result.acknowledged

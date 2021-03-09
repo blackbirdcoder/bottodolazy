@@ -11,12 +11,12 @@ def todo_start(message):
     if not user_registered_status:
         sticker = open(ui.sticker_path['returned'], 'rb')
         bot.send_sticker(message.from_user.id, sticker)
-        quantity = utils.todo.quantity_tasks(
-            utils.db.user_get_tasks(message, COLLECTION)
-        )
-        text = ui.dialogue['user_returned'].format(user_first_name,
-                                                   quantity['important'],
-                                                   quantity['ordinary'])
+        quantity = utils.todo.quantity_tasks(utils.db.user_get_tasks(message, COLLECTION))
+        text = ui.dialogue['user_returned'] \
+            .format(user_first_name, ui.menu_list_items['important'].replace('й', 'х'),
+                    quantity['important'],
+                    ui.menu_list_items['ordinary'].replace('й', 'x'),
+                    quantity['ordinary'])
         bot.send_message(message.from_user.id, text, reply_markup=MENU_MAIN,
                          parse_mode='HTML')
     else:

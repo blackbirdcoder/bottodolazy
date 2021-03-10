@@ -1,6 +1,6 @@
 import data.settings_ui as ui
-from loader import BOT as bot, BTN_MORE_HELP, KEYBOARD_MENU_CASE as MENU_CASE, KEYBOARD_MENU_MAIN as MENU_MAIN # noqa
-from utils.todo import notification_before_task, add_task # noqa
+from loader import BOT as bot, BTN_MORE_HELP, KEYBOARD_MENU_CASE as MENU_CASE, KEYBOARD_MENU_MAIN as MENU_MAIN, COLLECTION # noqa
+from utils.todo import notification_before_task, add_task, show_tasks # noqa
 
 
 @bot.message_handler(content_types=['text'])
@@ -18,15 +18,17 @@ def todo_main(message):
             list_name = list(ui.menu_list_items.keys())[0]
             text = ui.dialogue['task_desc']
             notification_before_task(message, text)
-            bot.register_next_step_handler(message, add_task, list_name)
+            bot.register_next_step_handler(message, add_task, list_name, COLLECTION)
         if message.text == ui.menu_list_items['ordinary']:
             list_name = list(ui.menu_list_items.keys())[1]
             text = ui.dialogue['task_desc']
             notification_before_task(message, text)
-            bot.register_next_step_handler(message, add_task, list_name)
+            bot.register_next_step_handler(message, add_task, list_name, COLLECTION)
         if message.text == ui.menu_list_items['back']:
             sticker = open(ui.sticker_path['main'], 'rb')
             bot.send_sticker(message.from_user.id, sticker)
             text = ui.dialogue['main_menu']
             bot.send_message(message.from_user.id, text, reply_markup=MENU_MAIN)
+        if message.text == ui.menu_main_items['view']:
+            show_tasks(message, COLLECTION)
     print('MAIN SCOPE MSG', message.text)

@@ -40,6 +40,11 @@ menu_list_items = {
     'back': '\U00002B05 Назад',
 }
 
+pic_task_status = {
+    'ready': '\U00002705',
+    'not_ready': '\U000025FB'
+}
+
 help_todo = {
     'short_info': f'<b>{menu_main_items["add"]}</b> - <i>Добавить задачи</i>\n'
                   f'<b>{menu_main_items["view"]}</b> - <i>Просмотр задач</i>\n'
@@ -65,3 +70,11 @@ help_todo = {
                  f'Кнопка \"<b>{menu_main_items["edit"]}</b>\" даст доступ к возможностям изменять текст задач, '
                  'отметить их как "готовые" или удалять задачи.\n'
 }
+
+table_asset = {
+    'separator': '<pre>-----------------------------</pre>',
+    'task_start_desc': '<b>{list_item}:</b>\n{separator}\n',
+    'task_desc': '{status} <b>{task}</b>\n{separator}\n',
+    'task_empty': '<em>Список задач пуст</em>'
+}
+

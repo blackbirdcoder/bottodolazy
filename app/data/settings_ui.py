@@ -18,6 +18,10 @@ dialogue = {
     'add_success': 'Задача добавлена в список',
     'not_success': 'Что-то пошло не так. Ошибка!',
     'main_menu': 'Главное меню',
+    'lists_ready_change': '{} Списки готовы к изменениям',
+    'lists_empty': '{} Списки пустые, нечего изменять',
+    'delete_task_success': '{} Задача удалена',
+    'delete_failed': '{} Не могу удалить задачу'
 }
 
 menu_main_items = {
@@ -28,10 +32,33 @@ menu_main_items = {
     'help': '\U00002753 Помощь',
 }
 
+button_blanks = {
+    'more_help_info': 'Хочу...',
+    'del': 'Удалить',
+    'edit': 'Редактировать',
+    'ready': 'Готово',
+    'not_ready': 'Отмена'
+}
+
 inline_btn = {
     'help': {
-        'more_help_info': 'Хочу...',
+        'more_help_info': button_blanks['more_help_info'],
     },
+    'control_panel_btn_ready': {
+        'del': button_blanks['del'],
+        'edit': button_blanks['edit'],
+        'ready': button_blanks['ready']
+    },
+    'control_panel_btn_not_ready': {
+        'del': button_blanks['del'],
+        'edit': button_blanks['edit'],
+        'not_ready': button_blanks['not_ready']
+    }
+}
+
+different_signs = {
+    'warning': '\U000026A0',
+    'exclamatory': '\U00002757',
 }
 
 menu_list_items = {
@@ -40,9 +67,18 @@ menu_list_items = {
     'back': '\U00002B05 Назад',
 }
 
+menu_back_item = {
+    'back': menu_list_items['back']
+}
+
 pic_task_status = {
     'ready': '\U00002705',
     'not_ready': '\U000025FB'
+}
+
+txt_task_status = {
+    'ready': 'Готово',
+    'not_ready': 'Не готово'
 }
 
 help_todo = {
@@ -76,5 +112,14 @@ table_asset = {
     'task_start_desc': '<b>{list_item}:</b>\n{separator}\n',
     'task_desc': '{status} <b>{task}</b>\n{separator}\n',
     'task_empty': '<em>Список задач пуст</em>'
+}
+
+card_asset = {
+    'separator': table_asset['separator'],
+    'card_head': table_asset['task_start_desc'],
+    'card_desc': '<i>Задача:</i> <b>{task}</b>\n'
+                 '<i>Статус:</i> {status} {pic_status}\n'
+                 '<i>ID задачи:</i> {task_id}\n',
+    'card_empty': table_asset['task_empty']
 }
 

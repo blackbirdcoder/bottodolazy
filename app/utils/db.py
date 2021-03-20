@@ -49,7 +49,13 @@ def user_get_tasks(message, db_collection):
 
 # ============ set
 def user_set_task(message, db_collection, current_list, current_task):
-    print('Current task:', current_task)
-    result = db_collection.update_one({"user_telegram_id": message.from_user.id},
-                                      {"$push": {current_list: current_task}})
+    result = db_collection.update_one({'user_telegram_id': message.from_user.id},
+                                      {'$push': {current_list: current_task}})
+    return result.acknowledged
+
+
+# =========== del
+def user_del_task(message, db_collection, task_list, task_id):
+    result = db_collection.update_one({'user_telegram_id': message.from_user.id},
+                                      {'$pull': {task_list: {'task_id': task_id}}})
     return result.acknowledged

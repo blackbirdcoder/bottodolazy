@@ -1,4 +1,4 @@
-bot_name = 'Лени Бот'
+bot_name = 'Ленни Бот'
 
 sticker_path = {
     'hello': 'static/images/lazyhello.webp',

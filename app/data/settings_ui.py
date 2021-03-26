@@ -21,7 +21,11 @@ dialogue = {
     'lists_ready_change': '{} Списки готовы к изменениям',
     'lists_empty': '{} Списки пустые, нечего изменять',
     'delete_task_success': '{} Задача удалена',
-    'delete_failed': '{} Не могу удалить задачу'
+    'delete_failed': '{} Не могу удалить задачу',
+    'new_text': '{} Введите новый текст задачи:',
+    'text_changed': '{} Текст задачи изменен',
+    'text_not_changed': '{} Не удалось изменить текст задачи',
+    'task_status_changed': '{} Статус задачи изменен'
 }
 
 menu_main_items = {

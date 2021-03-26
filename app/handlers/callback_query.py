@@ -1,6 +1,6 @@
 import data.settings_ui as ui
-from loader import BOT as bot, COLLECTION  # noqa
-from utils.todo import del_task  # noqa
+from loader import BOT as bot, COLLECTION # noqa
+from utils.todo import del_task, edit_text, switch_task_status  # noqa
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -23,3 +23,12 @@ def callback_inline_keyboard(call):
             else:
                 text = ui.dialogue['delete_failed'].format(ui.different_signs['exclamatory'])
                 bot.send_message(chat_id=call.message.chat.id, text=text)
+        if call.data == list(ui.button_blanks.keys())[2]:
+            # Edit text task
+            edit_text(call, COLLECTION, call.message.text)
+        if call.data == list(ui.button_blanks.keys())[3]:
+            # Mark the task as completed
+            switch_task_status(call, COLLECTION, call.message.text)
+        if call.data == list(ui.button_blanks.keys())[4]:
+            # Mark task as not completed
+            switch_task_status(call, COLLECTION, call.message.text)

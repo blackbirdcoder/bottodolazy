@@ -59,3 +59,13 @@ def user_del_task(message, db_collection, task_list, task_id):
     result = db_collection.update_one({'user_telegram_id': message.from_user.id},
                                       {'$pull': {task_list: {'task_id': task_id}}})
     return result.acknowledged
+
+
+# =========== update
+def user_update_task(message, db_collection, task_list, task_index, user_task):
+    result = db_collection.update_one(
+        {'user_telegram_id': message.from_user.id},
+        {'$set': {f'{task_list}.{task_index}': {'task_id': user_task['task_id'],
+                                                'task_status': user_task['task_status'],
+                                                'task': user_task['task']}}})
+    return result.acknowledged

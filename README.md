@@ -1,7 +1,14 @@
-# Lenny. Bot for Telegram. 
+# Lenny Bot 
 
-**Attention! The project is under construction!**
+Бот для мессенджера Telegram. Помогает вести список дел на ближайшее время.  
 
-Lenny Bot is your day-to-day assistant for the near future.
-How to find: @todolazy
+![Lenny](docs/avatar/avatarlazybot.jpg)  
+*Ленни: Я дружелюбный и ответственный, готов помочь. Давай дружить, **[жми сюда!](https://t.me/firstlazy_bot)*** 
+
+## Что умеет
+- Хранить задачи в разных списках
+- Редактировать задачи, отмечать как готовые, удалять.
+- Напоминать о невыполненных задачах
+- Быстрый просмотр задач
+
 

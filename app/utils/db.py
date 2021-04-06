@@ -1,4 +1,5 @@
 import pymongo
+import loader # noqa
 
 
 def connect(client, db_name, db_collection_name):
@@ -25,7 +26,7 @@ def add_user(message, db_collection):
             'important': [],
             'ordinary': [],
             'notifications': True,
-            'notification_interval': 60,
+            'notification_interval': loader.DEFAULT_VALUE,
             'working_process': True
         }
         db_collection.insert_one(user)
@@ -44,6 +45,13 @@ def user_get_tasks(message, db_collection):
             result[key] = value
         else:
             result[key] = None
+    return result
+
+
+def user_get_notifications(message, db_collection):
+    result = db_collection.find_one({'user_telegram_id': message.from_user.id},
+                                    {'notifications', 'notification_interval'})
+    del result['_id']
     return result
 
 
@@ -69,3 +77,11 @@ def user_update_task(message, db_collection, task_list, task_index, user_task):
                                                 'task_status': user_task['task_status'],
                                                 'task': user_task['task']}}})
     return result.acknowledged
+
+
+def user_update_notification(message, db_collection, field, status):
+    result = db_collection.update_one(
+        {'user_telegram_id': message.from_user.id},
+        {'$set': {field: status}})
+    return result.acknowledged
+

@@ -1,8 +1,13 @@
 import data.settings_ui as ui  # noqa
-from loader import BOT as bot, telebot, KEYBOARD_MENU_CASE as MENU_CASE, COLLECTION, KEYBOARD_MENU_BACK as MENU_BACK  # noqa
-from loader import BTN_CNL_BAR_READY, BTN_CNL_BAR_NOT_READY  # noqa
-from random import getrandbits, sample
+from loader import BOT as bot, telebot, KEYBOARD_MENU_CASE as MENU_CASE, COLLECTION  # noqa
+from loader import KEYBOARD_MENU_BACK as MENU_BACK, KEYBOARD_MENU_NOTIFI as MENU_NOTIFI  # noqa
+from loader import BTN_CNL_BAR_READY, BTN_CNL_BAR_NOT_READY, MIN_VALUE, MAX_VALUE # noqa
+from random import getrandbits, sample, choice
 from utils.db import user_set_task, user_get_tasks, user_del_task, user_update_task  # noqa
+from utils.db import user_get_notifications, user_update_notification  # noqa
+from threading import Thread
+import schedule
+import time
 
 
 def quantity_tasks(dicts):
@@ -232,6 +237,54 @@ def switch_task_status(call, db_collection, text):
         text = ui.dialogue['task_status_changed'].format(ui.different_signs['warning'])
         bot.send_message(chat_id=call.message.chat.id, text=text)
     else:
-        # TODO: Edit branch
-        pass
+        text = ui.dialogue['task_status_not_changed'].format(ui.different_signs['exclamatory'])
+        bot.send_message(chat_id=call.message.chat.id, text=text)
 
+
+def task_notification(message):
+    def get_not_ready_tasks():
+        result = []
+        for index, current_task in enumerate(tasks_important):
+            if not current_task.get('task_status'):
+                result.append(tasks_important[index])
+            else:
+                continue
+        return result
+
+    tasks_important = user_get_tasks(message, COLLECTION)['important']
+    if tasks_important is not None:
+        task = get_not_ready_tasks()
+        if task:
+            random_task = choice(task)
+            text_task = random_task.get('task')
+            text = ui.dialogue['task_notification'].format(ui.different_signs['warning'],
+                                                           message.from_user.first_name, text_task)
+            bot.send_message(message.from_user.id, text)
+
+
+def run_schedule():
+    while True:
+        time.sleep(1)
+        schedule.run_pending()
+
+
+def thread_schedule():
+    Thread(target=run_schedule, args=(), name='thread_run_schedule').start()
+
+
+def run_notifi(message, notifi_interval):
+    job = schedule.every(notifi_interval).minutes \
+        .do(task_notification, message) \
+        .tag(message.from_user.id)
+    return job
+
+
+def notifi_change_status(message, db_collection, status: bool):
+    success_change = user_update_notification(message, db_collection, 'notifications', status)
+    if success_change:
+        if not status:
+            text = ui.dialogue['notifications_off'].format(ui.different_signs['bell_off'])
+            bot.send_message(message.from_user.id, text)
+        if status:
+            text = ui.dialogue['notifications_on'].format(ui.different_signs['bell'])
+            bot.send_message(message.from_user.id, text)

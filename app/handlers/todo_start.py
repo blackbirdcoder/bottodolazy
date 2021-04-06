@@ -1,7 +1,8 @@
 import data.settings_ui as ui
 import utils.db
 import utils.todo
-from loader import BOT as bot, COLLECTION, KEYBOARD_MENU_MAIN as MENU_MAIN  # noqa
+from loader import BOT as bot, COLLECTION, KEYBOARD_MENU_MAIN as MENU_MAIN # noqa
+import schedule
 
 
 @bot.message_handler(commands=['start'])
@@ -25,3 +26,10 @@ def todo_start(message):
         bot.send_sticker(message.from_user.id, sticker)
         text = ui.dialogue['welcome_text'].format(user_first_name, bot_name)
         bot.send_message(message.from_user.id, text, reply_markup=MENU_MAIN)
+    notifi_data = utils.db.user_get_notifications(message, COLLECTION)
+    if notifi_data['notifications']:
+        schedule.clear(message.from_user.id)
+        job = utils.todo.run_notifi(message, notifi_data['notification_interval'])
+    else:
+        schedule.clear(message.from_user.id)
+

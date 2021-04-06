@@ -6,10 +6,18 @@ sticker_path = {
     'main': 'static/images/lazymainmenu.webp'
 }
 
+different_signs = {
+    'warning': '\U000026A0',
+    'exclamatory': '\U00002757',
+    'gear': '\U00002699',
+    'bell_off': '\U0001F515',
+    'bell': '\U0001F514'
+}
+
 dialogue = {
     'welcome_text': 'Привет! Дорогой друг {}.\n'
                     'Я {}. Твой помощник по делам на ближайшее время.',
-    'user_returned': 'С возвращением, {}.\n '
+    'user_returned': '{}, а вы знаете что у вас:\n '
                      '{} задач: <b>{}</b>\n '
                      '{} задач: <b>{}</b>\n',
     'more_info': '{}, хотите узнать подробней?',
@@ -25,7 +33,22 @@ dialogue = {
     'new_text': '{} Введите новый текст задачи:',
     'text_changed': '{} Текст задачи изменен',
     'text_not_changed': '{} Не удалось изменить текст задачи',
-    'task_status_changed': '{} Статус задачи изменен'
+    'task_status_changed': '{} Статус задачи изменен',
+    'task_status_not_changed': '{} Не удалось изменить статус задачи',
+    'task_notification': '{} {}, у вас не выполнена важная задача:\n{}\n',
+    'notification_settings': '{} Настройки уведомления',
+    'input_interval': 'Введите интервал:',
+    'interval_error': '{}Неверно задан интервал.\n{}, попробуй еще раз',
+    'new_interval': '{} Задан новый интервал уведомлений',
+    'interval_fail': '{} Интервал уведомлений не изменен, что-то пошло не так...',
+    'notifications_off': 'Уведомления отключены {}',
+    'notifications_on': 'Уведомления включены {}'
+}
+
+menu_list_items = {
+    'important': '\U0001F4D5 Важный',
+    'ordinary': '\U0001F4D7 Обычный',
+    'back': '\U00002B05 Назад',
 }
 
 menu_main_items = {
@@ -34,6 +57,12 @@ menu_main_items = {
     'edit': '\U0001F4DD Редактировать',
     'notifi': '\U0001F4E3 Уведомления',
     'help': '\U00002753 Помощь',
+}
+
+menu_settings_notification = {
+    'notification_off': '\U0001F515 Отключить',
+    'notification_interval': '\U000023F2 Интервал',
+    'back': menu_list_items['back']
 }
 
 button_blanks = {
@@ -58,17 +87,6 @@ inline_btn = {
         'edit': button_blanks['edit'],
         'not_ready': button_blanks['not_ready']
     }
-}
-
-different_signs = {
-    'warning': '\U000026A0',
-    'exclamatory': '\U00002757',
-}
-
-menu_list_items = {
-    'important': '\U0001F4D5 Важный',
-    'ordinary': '\U0001F4D7 Обычный',
-    'back': '\U00002B05 Назад',
 }
 
 menu_back_item = {
@@ -127,3 +145,9 @@ card_asset = {
     'card_empty': table_asset['task_empty']
 }
 
+interval_warning = {
+    'desc_warning': f'{different_signs["warning"]} Интервал указывается в минутах.\n'
+                    'При указании интервала допускаются только цифры.\n'
+                    'Числа от {min} до {max} (включительно)\n'
+                    'Если уведомление было отключено, оно будет автоматически включено.'
+}

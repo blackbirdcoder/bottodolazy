@@ -1,6 +1,9 @@
 import data.settings_ui as ui
 from loader import BOT as bot, BTN_MORE_HELP, KEYBOARD_MENU_CASE as MENU_CASE, KEYBOARD_MENU_MAIN as MENU_MAIN, COLLECTION # noqa
-from utils.todo import notification_before_task, add_task, show_tasks, edit_tasks # noqa
+from loader import KEYBOARD_MENU_NOTIFI as MENU_NOTIFI, MIN_VALUE, MAX_VALUE # noqa
+from utils.todo import notification_before_task, add_task, show_tasks, edit_tasks, notifi_change_status # noqa
+from utils.interval import pre_interval_notifications, interval_change # noqa
+from handlers.todo_start import todo_start # noqa
 
 
 @bot.message_handler(content_types=['text'])
@@ -33,4 +36,15 @@ def todo_main(message):
             show_tasks(message, COLLECTION)
         if message.text == ui.menu_main_items['edit']:
             edit_tasks(message, COLLECTION)
-    print('MAIN SCOPE MSG', message.text)
+        if message.text == ui.menu_main_items['notifi']:
+            text = ui.dialogue['notification_settings'].format(ui.different_signs['gear'])
+            bot.send_message(message.from_user.id, text, reply_markup=MENU_NOTIFI)
+        if message.text == ui.menu_settings_notification['notification_off']:
+            notifi_change_status(message, COLLECTION, False)
+            todo_start(message)
+        if message.text == ui.menu_settings_notification['notification_interval']:
+            text = ui.interval_warning['desc_warning'].format(min=MIN_VALUE, max=MAX_VALUE)
+            bot.send_message(message.from_user.id, text)
+            pre_interval_notifications(message)
+            bot.register_next_step_handler(message, interval_change)
+

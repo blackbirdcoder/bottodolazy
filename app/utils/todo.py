@@ -1,7 +1,7 @@
 import data.settings_ui as ui  # noqa
 from loader import BOT as bot, telebot, KEYBOARD_MENU_CASE as MENU_CASE, COLLECTION  # noqa
 from loader import KEYBOARD_MENU_BACK as MENU_BACK, KEYBOARD_MENU_NOTIFI as MENU_NOTIFI  # noqa
-from loader import BTN_CNL_BAR_READY, BTN_CNL_BAR_NOT_READY, MIN_VALUE, MAX_VALUE # noqa
+from loader import BTN_CNL_BAR_READY, BTN_CNL_BAR_NOT_READY, MIN_VALUE, MAX_VALUE  # noqa
 from random import getrandbits, sample, choice
 from utils.db import user_set_task, user_get_tasks, user_del_task, user_update_task  # noqa
 from utils.db import user_get_notifications, user_update_notification  # noqa
@@ -158,19 +158,23 @@ def find_list(call, db_collection, task_id):
             for value in current_value:
                 if value.get('task_id') == task_id:
                     return current_key
+    return False
 
 
 def find_index_task(call, db_collection, task_id, task_list_name):
     tasks = user_get_tasks(call, db_collection)
-    for index, value_dict in enumerate(tasks[task_list_name]):
-        if value_dict.get('task_id') == task_id:
-            return index
+    try:
+        for index, value_dict in enumerate(tasks[task_list_name]):
+            if value_dict.get('task_id') == task_id:
+                return index
+    except KeyError:
+        return False
 
 
 def del_task(call, db_collection, text):
     target_id = extract_id(text)
     target_list = find_list(call, db_collection, target_id)
-    if target_list is not None:
+    if target_list:
         return user_del_task(call, db_collection, target_list, target_id)
     else:
         return False
@@ -197,47 +201,55 @@ def edit_text(call, db_collection, text):
     target_id = extract_id(text)
     target_list = find_list(call, db_collection, target_id)
     task_index = find_index_task(call, db_collection, target_id, target_list)
-    bot.send_message(chat_id=call.message.chat.id,
-                     text=ui.dialogue['new_text'].format(ui.different_signs['warning']),
-                     reply_markup=telebot.types.ReplyKeyboardRemove())
+    if target_list and task_index is not False:
+        bot.send_message(chat_id=call.message.chat.id,
+                         text=ui.dialogue['new_text'].format(ui.different_signs['warning']),
+                         reply_markup=telebot.types.ReplyKeyboardRemove())
 
-    def add_new_text(msg, need_list, need_index):
-        new_text = msg.text
-        user_task = user_get_tasks(msg, db_collection)[need_list][need_index]
-        user_task['task'] = new_text
-        update_status = user_update_task(msg, COLLECTION, need_list, need_index, user_task)
-        if update_status:
-            notify_text = ui.dialogue['text_changed'].format(ui.different_signs['warning'])
-            bot.send_message(chat_id=call.message.chat.id,
-                             text=notify_text, reply_markup=MENU_BACK)
-            new_screen_info = edited_task_card(user_task)
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                                  text=new_screen_info[0], reply_markup=new_screen_info[1], parse_mode='HTML')
-        else:
-            notify_text = ui.dialogue['text_not_changed'].format(ui.different_signs['exclamatory'])
-            bot.send_message(chat_id=call.message.chat.id, text=notify_text, reply_markup=MENU_BACK)
+        def add_new_text(msg, need_list, need_index):
+            new_text = msg.text
+            user_task = user_get_tasks(msg, db_collection)[need_list][need_index]
+            user_task['task'] = new_text
+            update_status = user_update_task(msg, COLLECTION, need_list, need_index, user_task)
+            if update_status:
+                notify_text = ui.dialogue['text_changed'].format(ui.different_signs['warning'])
+                bot.send_message(chat_id=call.message.chat.id,
+                                 text=notify_text, reply_markup=MENU_BACK)
+                new_screen_info = edited_task_card(user_task)
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                      text=new_screen_info[0], reply_markup=new_screen_info[1], parse_mode='HTML')
+            else:
+                notify_text = ui.dialogue['text_not_changed'].format(ui.different_signs['exclamatory'])
+                bot.send_message(chat_id=call.message.chat.id, text=notify_text, reply_markup=MENU_BACK)
 
-    bot.register_next_step_handler(call.message, add_new_text, target_list, task_index)
+        bot.register_next_step_handler(call.message, add_new_text, target_list, task_index)
+    else:
+        text = ui.dialogue['wrong_edit_task'].format(ui.different_signs['exclamatory'])
+        bot.send_message(chat_id=call.message.chat.id, text=text)
 
 
 def switch_task_status(call, db_collection, text):
     target_id = extract_id(text)
     target_list = find_list(call, db_collection, target_id)
     task_index = find_index_task(call, db_collection, target_id, target_list)
-    user_task = user_get_tasks(call, db_collection)[target_list][task_index]
-    if user_task.get('task_status'):
-        user_task['task_status'] = False
+    if target_list and task_index is not False:
+        user_task = user_get_tasks(call, db_collection)[target_list][task_index]
+        if user_task.get('task_status'):
+            user_task['task_status'] = False
+        else:
+            user_task['task_status'] = True
+        update_status = user_update_task(call, COLLECTION, target_list, task_index, user_task)
+        if update_status:
+            new_screen_info = edited_task_card(user_task)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text=new_screen_info[0], reply_markup=new_screen_info[1], parse_mode='HTML')
+            text = ui.dialogue['task_status_changed'].format(ui.different_signs['warning'])
+            bot.send_message(chat_id=call.message.chat.id, text=text)
+        else:
+            text = ui.dialogue['task_status_not_changed'].format(ui.different_signs['exclamatory'])
+            bot.send_message(chat_id=call.message.chat.id, text=text)
     else:
-        user_task['task_status'] = True
-    update_status = user_update_task(call, COLLECTION, target_list, task_index, user_task)
-    if update_status:
-        new_screen_info = edited_task_card(user_task)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text=new_screen_info[0], reply_markup=new_screen_info[1], parse_mode='HTML')
-        text = ui.dialogue['task_status_changed'].format(ui.different_signs['warning'])
-        bot.send_message(chat_id=call.message.chat.id, text=text)
-    else:
-        text = ui.dialogue['task_status_not_changed'].format(ui.different_signs['exclamatory'])
+        text = ui.dialogue['wrong_task_status'].format(ui.different_signs['exclamatory'])
         bot.send_message(chat_id=call.message.chat.id, text=text)
 
 
